@@ -1,12 +1,14 @@
 ---
-title: "Atcoder 環境構築 Python編 2025年度版"
+title: "Atcoder 環境構築 Python編"
 emoji: "🐈"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [Atcoder, 環境構築]
-published: false
+published: true
 ---
 
 ## はじめに
+
+本記事は(2025/04/18)時点のものです。
 
 本記事は、WSL2 + atcoder-cliとonline-judge-toolsを用いたpython用の環境構築を備忘録としてまとめた記事です。C++は一部置き換えることで同様に環境構築することができます。
 
