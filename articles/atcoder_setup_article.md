@@ -11,6 +11,7 @@ published: true
 本記事は(2025/04/18)時点のものです。
 
 本記事は、WSL2 + atcoder-cliとonline-judge-toolsを用いたpython用の環境構築を備忘録としてまとめた記事です。C++は一部置き換えることで同様に環境構築することができます。
+~~日本語の拙さに定評があるため暖かく見守ってください~~
 
 WSL2 + Ubuntu 24.04.1 LTSで検証しています。WSL2は必須ではないですが、WSL2を使った方が分かりやすく、windowsの環境と競合しないため、オススメします。
 
@@ -35,56 +36,66 @@ atcoder-cliは上記のojと組み合わせて、
 
 それではれっつごー！
 
-## 前提条件
+-----
 
-- Node.jsが導入済み
-- pythonが導入済み
-- python3 venvが導入済み
+## 必要なもの
 
-:::details pythonのインストール
-### pythonのインストール
+この下記4つをまずインストールします！
 
-・WSLの場合
-```bash:bash
-sudo apt update
-sudo apt install python3 python3-pip
+- WSL2
+- Node.js
+- python
+- python3 venv
+
+:::details WSL2 + Ubuntuの導入
+
+### WSL2とは？
+
+WSL2とはWindows Subsystem for Linux 2の略。
+Windows上でLinuxを動かすための機能です！
+
+windowsのスタートメニューの検査に`windowsの機能`と入力してwindowsの機能の有効化または無効化を開きます。
+下の画像のチェックボックスを有効にしてください。
+![windowsの機能の有効化または無効化](/images/windows_func_settings.png)
+
+変更したらPCを再起動します。
+
+次に、Windows PowerShellを起動して以下のコマンドを実行する。
+
+```PowerShell:PowerShell
+wsl --install
 ```
 
-```bash
-python3 -V
+最後に好きなLinux OSを入れて終了です！
+MicroSoft Storeもしくはwslからインストールすることができます。
+
+#### MicroSoft Storeの場合
+MicroSoft Storeを起動して、`Ubuntu`で検索して好みのものをインストール。
+
+#### wslの場合
+
+現在入ってるOSの確認
+```PowerShell:PowerShell
+wsl -l -v
 ```
 
-```:結果
-Python 3.12.3
+入力可能なOSの一覧
+```PowerShell:PowerShell
+wsl --list --online
 ```
 
+OSのインストール
+```PowerShell:PowerShell
+wsl --install -d Ubuntu-24.04
+```
+
+インストールできたらwindowsのスタートから検索する、もしくはタスクバーからターミナルのアイコンを右クリックして起動しましょう！
+
+起動するとユーザーの作成が始まるため、ユーザー名とパスワードを設定します。
+
+これでWSLの準備完了です！
+以降はWSL2 + Ubuntu上で作業していきます
 :::
-
-### 仮想環境の作成
-
-OSによって管理するため、pipで環境を破壊しないためのルールとしてPEP 668というものがあります。そのため、pipを使うには仮想環境を作成して分ける必要があります。なので仮想環境の準備をします！
-
-#### 必要なパッケージをインストール
-```bash
-sudo apt install python3-venv
-```
-
-#### 仮想環境の作成
-```bash
-python3 -m venv myenv
-```
-
-#### 仮想環境のアクティベート
-
-```bash
-source myenv/bin/activate
-```
-
-```:結果
-(myenv) {ユーザ名}@{PC名}:~$
-```
-
-となれば成功です！
 
 ::::details Node.jsおよびnpmのインストール
 ### Node.jsおよびnpmのインストール
@@ -135,7 +146,74 @@ v22.14.0
 10.9.2
 ```
 ::::
+
+:::details pythonのインストール
+### pythonのインストール
+
+・WSLの場合
+```bash:bash
+sudo apt update
+sudo apt install python3 python3-pip
+```
+
+```bash
+python3 -V
+```
+
+```:結果
+Python 3.12.3
+```
+
+:::
+-----
+
+### 仮想環境の作成
+
+PythonをOSによって管理するため、pipで環境を破壊しないためのルールとしてPEP 668というものがあります。そのため、pipを使うには仮想環境を作成して分ける必要があります。なので仮想環境の準備をします！
+
+#### 必要なパッケージをインストール
+```bash
+sudo apt install python3-venv
+```
+
+#### 仮想環境の作成
+```bash
+python3 -m venv myenv
+```
+
+#### 仮想環境のアクティベート
+
+```bash
+source myenv/bin/activate
+```
+
+```:結果
+(myenv) {ユーザ名}@{PC名}:~$
+```
+
+念のためpythonのPATHが仮想環境になっていることを確認しときましょう
+(検証中になぜか変わっていなくて少し苦戦しました...)
+
+```bash
+which pip3
+which python3
+which pip
+which python
+```
+
+```:結果
+/home/{ユーザー名}/myenv/bin/pip3
+/home/{ユーザー名}/myenv/bin/python3
+/home/{ユーザー名}/myenv/bin/pip
+/home/{ユーザー名}/myenv/bin/python
+```
+となれば成功です！
+
+Node.jsとnpmがまだ入ってない場合は下記の手順を参考にしてください。
+
 お疲れ様です！下準備の完了です！
+
+-----
 
 ### atcoder-cliのインストール
 
@@ -162,6 +240,16 @@ PEP 668の影響で--userオプションはつけずに実行します。
 pip3 install online-judge-tools
 ```
 
+#### setuptoolsのインストール
+
+online-judge-toolsでは、python3.12以降で廃止されたdistutilsというモジュールを参照しています。そのため、python3.12でインストールして実行するとエラーがでます。その対策としてsetuptoolsをインストールします。
+
+参考記事: [【inshellisense】ModuleNotFoundError: No module named 'distutils' の対処法](https://qiita.com/pitao/items/1740a62ddee797aed807)
+
+```bash
+pip3 isstall setuptools
+```
+
 インストールできたか確認
 ```bash
 oj --version
@@ -180,19 +268,13 @@ acc check-oj
 online-judge-tools is available. found at:
 /home/{ユーザー名}/myenv/bin/oj
 ```
-### setuptoolsのインストール
-
-online-judge-toolsでは、python3.12以降で廃止されたdistutilsというモジュールを参照しています。そのため、python3.12でインストールして実行するとエラーがでます。その対策としてsetuptoolsをインストールします。
-
-参考記事: [【inshellisense】ModuleNotFoundError: No module named 'distutils' の対処法](https://qiita.com/pitao/items/1740a62ddee797aed807)
 
 
 ### acloginのインストール
 
 前まではユーザーIDとパスワードの組み合わせによる認証でしたが、現在(2025/4/18時点)AtCoderの仕様が少し変わり、認証に**Cloudflare Turnstile**が追加されました。
 （これはJavaScriptを実行させてクライアントがユーザーらしい動きをしているかどうか判定するものっぽい）
-これにより、accのログインなどのスクリプトが正常に機能しなくなっています。有志様による修正パッチスクリプト[aclogin](https://github.com/key-moon/aclogin)
-をインストールします。
+これにより、accのログインなどのスクリプトが正常に機能しなくなっています。有志様による修正パッチスクリプト[aclogin](https://github.com/key-moon/aclogin)をインストールします。
 
 ```bash
 pip3 install aclogin
@@ -317,7 +399,7 @@ VScodeで開けたら、```ctl+@```を押してターミナルを起動します
 acc new abc321
 ```
 
-![テスト](public\images\vscode_screenshot.png)
+![accの実行結果画面](/images/vscode_screenshot.png)
 
 
 これでツールのセットアップは完了です！！！
@@ -334,12 +416,12 @@ acc new abc321
 
 ```py-coder```直下に```.vscode```フォルダを作成します。
 
-そこにsettings.jsonを作成します。内容は下記の通りです。
+そこに`settings.json`を作成します。内容は下記の通りです。
 ここではcommand-runnerにコマンドのエイリアスを登録しています。
 
 - ```oj test```は作業中の親ディレクトリに移動して、python3でojのテストコマンドを実行するエイリアスです。
 
-- ```acc submit```は作業中の親のディレクトリ名に移動したのち、accの提出コマンドをpypyで実行し、確認の入力をechoで自動化したエイリアスです。
+- ```acc submit```は作業中の親のディレクトリ名に移動したのち、accの提出コマンドをpypyオプションで実行し、確認の入力をechoで自動化したエイリアスです。
 
 - ```execute python```は開いてるpythonファイルを実行するエイリアスです。
 
@@ -385,5 +467,6 @@ acc new abc321
 自動でサンプルケースのテストが行われるはずです！
 テストの確認した後```ctl + shift + +```を押すと提出ができます！
 
-これにて環境構築ほぼ終了です！あとはお好みにあわせて変更してください！
+これにて環境構築終了です！あとはお好みにあわせて変更してください！
 お疲れ様でした！！
+もし不明な点や間違えている点があれば遠慮なくコメントお願いします！
