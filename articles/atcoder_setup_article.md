@@ -247,7 +247,7 @@ online-judge-toolsでは、python3.12以降で廃止されたdistutilsという�
 参考記事: [【inshellisense】ModuleNotFoundError: No module named 'distutils' の対処法](https://qiita.com/pitao/items/1740a62ddee797aed807)
 
 ```bash
-pip3 isstall setuptools
+pip3 install setuptools
 ```
 
 インストールできたか確認
